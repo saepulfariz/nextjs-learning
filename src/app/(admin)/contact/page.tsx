@@ -41,39 +41,39 @@ export default function Contact() {
 
         <hr className="mb-6" />
         <div className="text-center text-lg text-gray-700 dark:text-gray-300 mb-4">
-          <p className="font-medium">Nama: John Doe</p>
-          <p className="font-medium">Email: johndoe@example.com</p>
+          <p className="font-medium">Nama: Saepul Hidayat</p>
+          <p className="font-medium">Email: saepulhidayat302@gmail.com</p>
           <p className="font-medium">
             GitHub:
             <a
-              href="https://github.com/johndoe"
+              href="https://github.com/saepulfariz"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline"
             >
-              github.com/johndoe
+              github.com/saepulfariz
             </a>
           </p>
           <p className="font-medium">
             Instagram:
             <a
-              href="https://instagram.com/johndoe"
+              href="https://instagram.com/saepulfariz"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline"
             >
-              @johndoe
+              @saepulfariz
             </a>
           </p>
           <p className="font-medium">
             LinkedIn:
             <a
-              href="https://linkedin.com/in/johndoe"
+              href="https://linkedin.com/in/saepul-hidayat"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline"
             >
-              linkedin.com/in/johndoe
+              linkedin.com/in/saepul-hidayat
             </a>
           </p>
         </div>

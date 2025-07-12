@@ -10,7 +10,7 @@ export default function About() {
         <div className="mb-6 flex justify-center">
           <div className="w-40 h-40 relative rounded-full overflow-hidden border-4 border-gray-300">
             <Image
-              src="/assets/images/saepulfariz.jpg" // Ganti dengan nama file foto kamu
+              src="/assets/images/saepulfariz.jpg"
               alt="Foto Profil"
               layout="fill"
               objectFit="cover"
