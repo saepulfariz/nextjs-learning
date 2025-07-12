@@ -5,6 +5,7 @@ export default function About() {
     <>
       <div className="max-w-xl mx-auto px-4 py-10 text-center">
         <h1 className="text-3xl font-bold mb-6">Tentang Saya</h1>
+        <hr className="mb-6" />
 
         <div className="mb-6 flex justify-center">
           <div className="w-40 h-40 relative rounded-full overflow-hidden border-4 border-gray-300">
