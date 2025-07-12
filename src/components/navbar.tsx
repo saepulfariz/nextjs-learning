@@ -43,6 +43,12 @@ export default function Navbar() {
             >
               Contact
             </Link>
+            <Link
+              href="/products"
+              className="text-gray-800 hover:text-blue-600 font-medium"
+            >
+              Products
+            </Link>
           </div>
 
           <div className="relative" ref={dropdownRef}>
