@@ -15,10 +15,6 @@ const products: Product[] = [
   { id: 4, name: "Produk D", description: "Deskripsi Produk D", price: 25000 },
 ];
 
-interface ProductPageProps {
-  product: Product | null;
-}
-
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const product = products.find((p) => p.id === Number(id));
