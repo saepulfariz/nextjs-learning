@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 
 const NotFound: React.FC = () => {
@@ -47,7 +48,7 @@ const NotFound: React.FC = () => {
         >
           Maaf, halaman yang Anda cari tidak tersedia.
         </p>
-        <a
+        <Link
           href="/"
           style={{
             padding: "12px 32px",
@@ -63,7 +64,7 @@ const NotFound: React.FC = () => {
           onMouseOut={(e) => (e.currentTarget.style.background = "#6c63ff")}
         >
           Kembali ke Beranda
-        </a>
+        </Link>
       </div>
     </>
   );
