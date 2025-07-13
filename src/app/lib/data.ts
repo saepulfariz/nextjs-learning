@@ -29,3 +29,18 @@ export async function fetchProducts() {
     throw new Error('Failed to fetch products data.');
   }
 }
+
+export async function fetchProductById(id: string) {
+  try {
+    const data = await sql<Product[]>`
+      SELECT
+        *
+      FROM products
+      WHERE products.id = ${id};
+    `;
+
+    return data[0];
+  } catch (error) {
+    return false;
+  }
+}
