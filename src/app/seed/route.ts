@@ -1,4 +1,5 @@
 import postgres from 'postgres';
+import { products } from '@/app/lib/placeholder-data';
 
 const POSTGRES_SSL = (process.env.POSTGRES_SSL) ? ( ( process.env.POSTGRES_SSL == 'true' ) ? true : false) : false;
 const POSTGRES_PORT = (process.env.POSTGRES_PORT) ? process.env.POSTGRES_PORT : '5432';
@@ -28,7 +29,17 @@ async function seedProducts() {
     );
   `;
 
+   const insertedProducts = await Promise.all(
+    products.map(
+      (product) => sql`
+        INSERT INTO products (id, name, description, price)
+        VALUES (${product.id}, ${product.name}, ${product.description}, ${product.price})
+        ON CONFLICT (id) DO NOTHING;
+      `,
+    ),
+  );
 
+  return insertedProducts;
 }
 
 export async function GET() {
