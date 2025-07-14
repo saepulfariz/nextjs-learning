@@ -2,7 +2,7 @@ import { fetchProductById } from "@/app/lib/data";
 import ShowProduct from "@/app/ui/products/show-products";
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } = await params;
   const product = await fetchProductById(id);
 
   if (!product) {
