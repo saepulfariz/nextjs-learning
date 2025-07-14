@@ -1,8 +1,14 @@
 import { fetchProductById } from "@/app/lib/data";
 import ShowProduct from "@/app/ui/products/show-products";
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const { id } = await params;
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function Page({ params }: PageProps) {
+  const { id } = params;
   const product = await fetchProductById(id);
 
   if (!product) {
