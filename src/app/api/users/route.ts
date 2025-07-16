@@ -45,3 +45,45 @@ export async function POST(request: Request) {
     }
     
 }
+
+export async function PATCH(request: Request) {
+    try {
+        const body = await request.json();
+        const { id, name } = body;
+        if (!id || !name) {
+            return new Response(JSON.stringify({ error: 'ID and Name are required' }), {
+                status: 400,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        }
+
+        // const existingUser = users.find(user => user.id === id);
+        
+        const userIndex = users.findIndex(user => user.id === id);
+        if (userIndex === -1) {
+            return new Response(JSON.stringify({ error: 'User not found' }), {
+                status: 404,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        }
+
+        users[userIndex].name = name;
+
+        return new Response(JSON.stringify(users[userIndex]), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    } catch (error) {
+         return new Response(JSON.stringify({ error: 'Invalid JSON data' }), {
+            status: 400,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    }
+}   
