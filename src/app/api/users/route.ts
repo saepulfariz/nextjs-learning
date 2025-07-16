@@ -87,3 +87,44 @@ export async function PATCH(request: Request) {
         });
     }
 }   
+
+export async function DELETE(request: Request) {
+    try {
+        const body = await request.json();
+        const { id } = body;
+        if (!id) {
+            return new Response(JSON.stringify({ error: 'ID is required' }), {
+                status: 400,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        }
+
+        const userIndex = users.findIndex(user => user.id === id);
+        if (userIndex === -1) {
+            return new Response(JSON.stringify({ error: 'User not found' }), {
+                status: 404,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        }
+
+        users.splice(userIndex, 1);
+
+        return new Response(JSON.stringify({ message: 'User deleted successfully' }), {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    } catch (error) {
+         return new Response(JSON.stringify({ error: 'Invalid JSON data' }), {
+            status: 400,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    }
+}

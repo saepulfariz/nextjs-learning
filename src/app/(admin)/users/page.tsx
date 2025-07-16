@@ -65,6 +65,22 @@ export default function Page() {
     }
   };
 
+  const handleDeleteUser = async (id: number) => {
+    const response = await fetch(`/api/users`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (response.ok) {
+      fetchUsers();
+    } else {
+      console.error("Failed to delete user");
+    }
+  };
+
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 py-16">
@@ -145,10 +161,21 @@ export default function Page() {
                       </td>
                       <td className="px-6 py-4 text-sm font-medium">
                         <button
-                          onClick={() => setEditId(user.id)}
+                          onClick={() => {
+                            setEditId(user.id);
+                            setEditName(user.name);
+                          }}
                           className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none"
                         >
                           Edit
+                        </button>
+                        <button
+                          className="ml-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none"
+                          onClick={() => {
+                            handleDeleteUser(user.id);
+                          }}
+                        >
+                          Delete
                         </button>
                       </td>
                     </>
