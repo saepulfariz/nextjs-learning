@@ -12,3 +12,36 @@ export async function GET(request: Request) {
         },
     });
 }
+
+export async function POST(request: Request) {
+    try {
+        const body = await request.json();
+        const { name } = body;
+        if (!name) {
+            return new Response(JSON.stringify({ error: 'Name is required' }), {
+                status: 400,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        }
+
+        const newUser = { id : Date.now(), name };
+        users.push(newUser);
+        
+        return new Response(JSON.stringify(newUser), {
+            status: 201,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    } catch (error) {
+         return new Response(JSON.stringify({ error: 'Invalid JSON data' }), {
+            status: 400,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    }
+    
+}
