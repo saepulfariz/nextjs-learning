@@ -49,6 +49,12 @@ export default function Navbar() {
             >
               Products
             </Link>
+            <Link
+              href="/users"
+              className="text-gray-800 hover:text-blue-600 font-medium"
+            >
+              Users
+            </Link>
           </div>
 
           <div className="relative" ref={dropdownRef}>
