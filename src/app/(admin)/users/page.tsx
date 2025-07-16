@@ -10,6 +10,8 @@ type User = {
 export default function Page() {
   const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
+  const [editId, setEditId] = useState(0);
+  const [editName, setEditName] = useState("");
 
   const fetchUsers = async () => {
     const response = await fetch("/api/users");
@@ -40,6 +42,26 @@ export default function Page() {
       setName("");
     } else {
       console.error("Failed to add user");
+    }
+  };
+
+  const handleUpdateUser = async (id: number) => {
+    if (!editName) return;
+
+    const response = await fetch("/api/users", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, name: editName }),
+    });
+
+    if (response.ok) {
+      fetchUsers();
+      setEditId(0);
+      setEditName("");
+    } else {
+      console.error("Failed to update user");
     }
   };
 
@@ -86,12 +108,51 @@ export default function Page() {
                   </td>
                 </tr>
               )}
-              {users.map((user: User) => (
+              {users.map((user: User, index) => (
                 <tr key={user.id}>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
-                    {user.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium">-</td>
+                  {editId === user.id ? (
+                    <>
+                      <td className="px-6 py-4">
+                        <input
+                          type="text"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => {
+                            handleUpdateUser(user.id);
+                            setEditId(0);
+                          }}
+                          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none"
+                        >
+                          Update
+                        </button>
+                        <button
+                          onClick={() => setEditId(0)}
+                          className="ml-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none"
+                        >
+                          Cancel
+                        </button>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        {user.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium">
+                        <button
+                          onClick={() => setEditId(user.id)}
+                          className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none"
+                        >
+                          Edit
+                        </button>
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))}
             </tbody>
