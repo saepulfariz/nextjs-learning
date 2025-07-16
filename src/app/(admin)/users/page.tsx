@@ -9,19 +9,39 @@ type User = {
 
 export default function Page() {
   const [users, setUsers] = useState<User[]>([]);
+  const [name, setName] = useState("");
+
+  const fetchUsers = async () => {
+    const response = await fetch("/api/users");
+    if (!response.ok) {
+      throw new Error("Failed to fetch users");
+    }
+    const data = await response.json();
+    setUsers(data);
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const response = await fetch("/api/users");
-      if (!response.ok) {
-        throw new Error("Failed to fetch users");
-      }
-      const data = await response.json();
-      setUsers(data);
-    };
-
     fetchUsers();
   }, []);
+
+  const handleAddUser = async () => {
+    if (!name) return;
+
+    const response = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name }),
+    });
+
+    if (response.ok) {
+      fetchUsers();
+      setName("");
+    } else {
+      console.error("Failed to add user");
+    }
+  };
 
   return (
     <>
@@ -29,6 +49,22 @@ export default function Page() {
         <h1 className="text-3xl font-semibold text-center text-gray-800 dark:text-white mb-8">
           List Users
         </h1>
+
+        <div className="mb-5">
+          <input
+            type="text"
+            placeholder="Input new user..."
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleAddUser}
+            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+          >
+            Add User
+          </button>
+        </div>
 
         <div className="overflow-x-auto bg-white shadow rounded-lg">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
