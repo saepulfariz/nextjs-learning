@@ -25,6 +25,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 - pnpm install @prisma/client
 - pnpm install prisma --save-dev
 - npx prisma init
+- npx prisma migrate dev --name init_table
 
 ## Learn More
 
