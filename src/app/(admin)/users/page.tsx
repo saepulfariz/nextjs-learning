@@ -13,6 +13,7 @@ type User = {
 export default function Page() {
   const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [editId, setEditId] = useState(0);
   const [editName, setEditName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -33,18 +34,20 @@ export default function Page() {
 
   const handleAddUser = async () => {
     if (!name) return;
+    if (!email) return;
 
     const response = await fetch("/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, email }),
     });
 
     if (response.ok) {
       fetchUsers();
       setName("");
+      setEmail("");
     } else {
       console.error("Failed to add user");
     }
@@ -99,11 +102,18 @@ export default function Page() {
             placeholder="Input new user..."
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-50 mr-2 mb-2 max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="email"
+            placeholder="Input user email..."
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-50 mr-2 mb-2 max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
           />
           <button
             onClick={handleAddUser}
-            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
           >
             Add User
           </button>
