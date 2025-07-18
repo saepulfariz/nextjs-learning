@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 type User = {
   id: number;
   name: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export default function Page() {
@@ -12,6 +15,7 @@ export default function Page() {
   const [name, setName] = useState("");
   const [editId, setEditId] = useState(0);
   const [editName, setEditName] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const fetchUsers = async () => {
     const response = await fetch("/api/users");
@@ -19,7 +23,8 @@ export default function Page() {
       throw new Error("Failed to fetch users");
     }
     const data = await response.json();
-    setUsers(data);
+    setUsers(data.data);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -112,14 +117,30 @@ export default function Page() {
                   Name
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-200">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-200">
+                  Created At
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-200">
+                  Updated At
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-200">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {users.length === 0 && (
+              {loading && (
                 <tr>
                   <td colSpan={4} className="text-center py-4">
+                    Loading...
+                  </td>
+                </tr>
+              )}
+              {!loading && users.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">
                     No users found
                   </td>
                 </tr>
@@ -158,6 +179,19 @@ export default function Page() {
                     <>
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                         {user.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        {user.email}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        {new Date(user.created_at).toLocaleDateString() +
+                          " " +
+                          new Date(user.created_at).toLocaleTimeString()}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        {new Date(user.updated_at).toLocaleDateString() +
+                          " " +
+                          new Date(user.updated_at).toLocaleTimeString()}
                       </td>
                       <td className="px-6 py-4 text-sm font-medium">
                         <button
