@@ -104,3 +104,37 @@ export async function PATCH(request: NextRequest) {
     await prisma.$disconnect();
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id } = body;
+
+    if (!id) {
+      return new Response(JSON.stringify({ error: "ID is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const deletedUser = await prisma.users.update({
+      where: { id },
+      data: { deleted_at: new Date() },
+    });
+
+    return new Response(
+      JSON.stringify({
+        data: deletedUser,
+        message: "User deleted successfully",
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return new Response("Failed to delete user", { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
