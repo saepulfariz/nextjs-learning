@@ -67,3 +67,40 @@ export async function POST(request: NextRequest) {
     await prisma.$disconnect();
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, name, email } = body;
+
+    if (!id || !name || !email) {
+      return new Response(
+        JSON.stringify({ error: "ID and Name are required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const updatedUser = await prisma.users.update({
+      where: { id },
+      data: { name, email, updated_at: new Date() },
+    });
+
+    return new Response(
+      JSON.stringify({
+        data: updatedUser,
+        message: "User updated successfully",
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return new Response("Failed to update user", { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
+}

@@ -16,6 +16,7 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [editId, setEditId] = useState(0);
   const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
   const [loading, setLoading] = useState(true);
 
   const fetchUsers = async () => {
@@ -55,19 +56,21 @@ export default function Page() {
 
   const handleUpdateUser = async (id: number) => {
     if (!editName) return;
+    if (!editEmail) return;
 
     const response = await fetch("/api/users", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id, name: editName }),
+      body: JSON.stringify({ id, name: editName, email: editEmail }),
     });
 
     if (response.ok) {
       fetchUsers();
       setEditId(0);
       setEditName("");
+      setEditEmail("");
     } else {
       console.error("Failed to update user");
     }
@@ -168,6 +171,14 @@ export default function Page() {
                         />
                       </td>
                       <td className="px-6 py-4">
+                        <input
+                          type="email"
+                          value={editEmail}
+                          onChange={(e) => setEditEmail(e.target.value)}
+                          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </td>
+                      <td className="px-6 py-4 flex items-center">
                         <button
                           onClick={() => {
                             handleUpdateUser(user.id);
@@ -203,11 +214,12 @@ export default function Page() {
                           " " +
                           new Date(user.updated_at).toLocaleTimeString()}
                       </td>
-                      <td className="px-6 py-4 text-sm font-medium">
+                      <td className="px-6 py-4 text-sm font-medium flex">
                         <button
                           onClick={() => {
                             setEditId(user.id);
                             setEditName(user.name);
+                            setEditEmail(user.email);
                           }}
                           className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none"
                         >
