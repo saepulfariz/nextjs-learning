@@ -20,8 +20,88 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Prisma
+## Prisma Setup & Commands
 
+### Initial Setup
+
+```bash
+pnpm install @prisma/client
+pnpm install prisma --save-dev
+npx prisma init
+```
+
+### Development Workflow
+
+```bash
+# Create and run migration
+npx prisma migrate dev --name describe_your_change
+
+# Generate client
+npx prisma generate
+
+# Seed database
+npx prisma db seed
+```
+
+### Migration Management
+
+```bash
+# Check migration status
+npx prisma migrate status
+
+# Deploy migrations (PRODUCTION)
+npx prisma migrate deploy
+
+# Reset database (DEV ONLY)
+npx prisma migrate reset
+```
+
+### Troubleshooting Common Issues
+
+#### 1. "Relation already exists" Error
+
+```bash
+# Mark migration as already applied
+npx prisma migrate resolve --applied [migration_name]
+
+# Then deploy remaining migrations
+npx prisma migrate deploy
+```
+
+#### 2. Migration History Conflicts
+
+```bash
+# Check what's different
+npx prisma migrate status
+
+# Option 1: Reset (dev only)
+npx prisma migrate reset --force
+
+# Option 2: Resolve conflicts
+npx prisma migrate resolve --applied [migration_name]
+```
+
+#### 3. Database Out of Sync
+
+```bash
+# Force push schema to database (careful!)
+npx prisma db push --accept-data-loss
+
+# Or reset and start fresh
+npx prisma migrate reset
+```
+
+#### Fix production migrate
+
+```bash
+npx prisma migrate resolve --applied 20250718100021_init_table
+npx prisma migrate deploy
+npx prisma generate
+```
+
+#### Self Notes
+
+```bash
 - pnpm install @prisma/client
 - pnpm install prisma --save-dev
 - npx prisma init
@@ -29,6 +109,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 - npx prisma generate
 - npx prisma migrate dev --name create_divisions_table
 - npx prisma migrate reset
+```
 
 ## Learn More
 
