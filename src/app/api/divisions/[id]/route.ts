@@ -5,12 +5,14 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const division = await prisma.$transaction(async (prisma) => {
       return await prisma.divisions.findUnique({
-        where: { id: params.id, deleted_at: null },
+        where: { id, deleted_at: null },
       });
     });
 
@@ -43,9 +45,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { name } = body;
 
@@ -57,7 +60,7 @@ export async function PATCH(
     }
 
     const division = await prisma.divisions.findUnique({
-      where: { id: params.id, deleted_at: null },
+      where: { id, deleted_at: null },
     });
 
     if (!division) {
@@ -69,7 +72,7 @@ export async function PATCH(
 
     const updatedDivision = await prisma.$transaction(async (prisma) => {
       return await prisma.divisions.update({
-        where: { id: params.id },
+        where: { id },
         data: { name, updated_at: new Date() },
       });
     });
@@ -96,11 +99,12 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const division = await prisma.divisions.findUnique({
-      where: { id: params.id, deleted_at: null },
+      where: { id, deleted_at: null },
     });
 
     if (!division) {
@@ -112,7 +116,7 @@ export async function DELETE(
 
     const deletedDivision = await prisma.$transaction(async (prisma) => {
       return await prisma.divisions.update({
-        where: { id: params.id },
+        where: { id },
         data: { deleted_at: new Date() },
       });
     });
