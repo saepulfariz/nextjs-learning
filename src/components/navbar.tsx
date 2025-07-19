@@ -1,24 +1,59 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import DropdownMenu from "./navbar/DropdownMenu";
+import NavDropdownTrigger from "./navbar/NavDropdownTrigger";
 
 export default function Navbar() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [stateDropdownOpen] = useState(false);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const masterMenuItems = [
+    {
+      label: "Products",
+      href: "/products",
+    },
+    {
+      label: "Users",
+      href: "/users",
+    },
+    {
+      label: "Divisions",
+      href: "/divisions",
+    },
+  ];
+
+  // State menu items
+  const stateMenuItems = [
+    {
+      label: "Local Counter",
+      href: "/state/local-counter",
+    },
+    {
+      label: "Global Counter",
+      href: "/state/global-counter",
+    },
+  ];
+
+  // Profile menu items
+  const profileMenuItems = [
+    {
+      label: "Saepulfariz",
+      divider: true,
+    },
+    {
+      label: "Profile",
+      href: "/profile",
+    },
+    {
+      label: "Settings",
+      href: "/settings",
+    },
+    {
+      label: "Logout",
+      onClick: () => alert("Logout clicked"),
+    },
+  ];
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm">
@@ -43,60 +78,42 @@ export default function Navbar() {
             >
               Contact
             </Link>
-            <Link
-              href="/products"
-              className="text-gray-800 hover:text-blue-600 font-medium"
-            >
-              Products
-            </Link>
-            <Link
-              href="/users"
-              className="text-gray-800 hover:text-blue-600 font-medium"
-            >
-              Users
-            </Link>
-            <Link
-              href="/divisions"
-              className="text-gray-800 hover:text-blue-600 font-medium"
-            >
-              Divisions
-            </Link>
+
+            {/* State Dropdown Menu */}
+            <DropdownMenu
+              trigger={
+                <NavDropdownTrigger label="Master" isOpen={stateDropdownOpen} />
+              }
+              items={masterMenuItems}
+              position="left"
+            />
+
+            {/* State Dropdown Menu */}
+            <DropdownMenu
+              trigger={
+                <NavDropdownTrigger label="States" isOpen={stateDropdownOpen} />
+              }
+              items={stateMenuItems}
+              position="left"
+            />
           </div>
 
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="focus:outline-none"
-            >
-              <Image
-                src="/assets/images/saepulfariz.jpg"
-                alt="User Profile"
-                width={40}
-                height={40}
-                className="rounded-full border-2 border-gray-300"
-              />
-            </button>
-
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                <div className="px-4 py-2 border-b text-sm text-gray-700">
-                  Saepulfariz
-                </div>
-                <Link
-                  href="/profile"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={() => alert("Logout clicked")}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Profile Dropdown Menu */}
+          <DropdownMenu
+            trigger={
+              <button className="focus:outline-none">
+                <Image
+                  src="/assets/images/saepulfariz.jpg"
+                  alt="User Profile"
+                  width={40}
+                  height={40}
+                  className="rounded-full border-2 border-gray-300"
+                />
+              </button>
+            }
+            items={profileMenuItems}
+            position="right"
+          />
         </div>
       </div>
     </nav>
