@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 type Division = {
   id: number;
   name: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export default function Page() {
@@ -23,7 +23,7 @@ export default function Page() {
     }
     const data = await response.json();
     setLoading(false);
-    setDivisions(data);
+    setDivisions(data.data);
   };
 
   useEffect(() => {
@@ -52,12 +52,12 @@ export default function Page() {
   const handleUpdateDivision = async (id: number) => {
     if (!editName) return;
 
-    const response = await fetch("/api/divisions", {
+    const response = await fetch(`/api/divisions/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id, name: editName }),
+      body: JSON.stringify({ name: editName }),
     });
 
     if (response.ok) {
@@ -70,12 +70,11 @@ export default function Page() {
   };
 
   const handleDeleteDivision = async (id: number) => {
-    const response = await fetch(`/api/divisions`, {
+    const response = await fetch(`/api/divisions/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id }),
     });
 
     if (response.ok) {
@@ -137,6 +136,13 @@ export default function Page() {
                   </td>
                 </tr>
               )}
+              {!loading && divisions.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-center py-4">
+                    No divisions found
+                  </td>
+                </tr>
+              )}
               {divisions.map((division: Division, index) => (
                 <tr key={division.id}>
                   {editId === division.id ? (
@@ -176,14 +182,14 @@ export default function Page() {
                         {division.name}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                        {new Date(division.createdAt).toLocaleDateString() +
+                        {new Date(division.created_at).toLocaleDateString() +
                           " " +
-                          new Date(division.createdAt).toLocaleTimeString()}
+                          new Date(division.created_at).toLocaleTimeString()}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                        {new Date(division.updatedAt).toLocaleDateString() +
+                        {new Date(division.updated_at).toLocaleDateString() +
                           " " +
-                          new Date(division.updatedAt).toLocaleTimeString()}
+                          new Date(division.updated_at).toLocaleTimeString()}
                       </td>
                       <td className="px-6 py-4 text-sm font-medium">
                         <button
