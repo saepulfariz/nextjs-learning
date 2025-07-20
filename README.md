@@ -111,6 +111,14 @@ npx prisma generate
 - npx prisma migrate reset
 ```
 
+## Redux
+
+### Initial Setup
+
+```bash
+npm install @reduxjs/toolkit react-redux
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

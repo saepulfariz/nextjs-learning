@@ -2,8 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import DropdownMenu from "./navbar/DropdownMenu";
-import NavDropdownTrigger from "./navbar/NavDropdownTrigger";
+import DropdownMenu from "@/app/ui/navbar/DropdownMenu";
+import NavDropdownTrigger from "@/app/ui/navbar/NavDropdownTrigger";
 
 export default function Navbar() {
   const [stateDropdownOpen] = useState(false);
@@ -30,8 +30,16 @@ export default function Navbar() {
       href: "/state/local-counter",
     },
     {
-      label: "Global Counter",
-      href: "/state/global-counter",
+      label: "Global Counter Easy",
+      href: "/state/global-counter-easy",
+    },
+    {
+      label: "Global Counter Hard",
+      href: "/state/global-counter-hard",
+    },
+    {
+      label: "Global Posts",
+      href: "/state/global-posts",
     },
   ];
 

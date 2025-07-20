@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+
+import { useAppDispatch } from "@/lib/hooks";
+import {
+  setLoading as setLoadingGlobal,
+  setUsers as setUsersGlobal,
+} from "@/lib/features/userSlice";
+import UserManagementList from "@/app/ui/state/UserManagementList";
 
 type User = {
   id: number;
@@ -11,6 +18,8 @@ type User = {
 };
 
 export default function Page() {
+  const dispatch = useAppDispatch();
+
   const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,19 +28,29 @@ export default function Page() {
   const [editEmail, setEditEmail] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const fetchUsers = async () => {
-    const response = await fetch("/api/users");
-    if (!response.ok) {
-      throw new Error("Failed to fetch users");
+  // Use useCallback to memoize fetchUsers function
+  const fetchUsers = useCallback(async () => {
+    dispatch(setLoadingGlobal(true));
+    try {
+      const response = await fetch("/api/users");
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+      const data = await response.json();
+      setUsers(data.data);
+      setLoading(false);
+      dispatch(setUsersGlobal(data.data));
+      dispatch(setLoadingGlobal(false));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setLoading(false);
+      dispatch(setLoadingGlobal(false));
     }
-    const data = await response.json();
-    setUsers(data.data);
-    setLoading(false);
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]); // Now fetchUsers is in dependency array
 
   const handleAddUser = async () => {
     if (!name) return;
@@ -46,6 +65,10 @@ export default function Page() {
     });
 
     if (response.ok) {
+      // const newUser = await response.json();
+      // setUsers((prevUsers) => [...prevUsers, newUser.data]);
+      // dispatch(setUsersGlobal([...users, newUser.data]));
+
       fetchUsers();
       setName("");
       setEmail("");
@@ -241,6 +264,8 @@ export default function Page() {
             </tbody>
           </table>
         </div>
+
+        <UserManagementList />
       </div>
     </>
   );

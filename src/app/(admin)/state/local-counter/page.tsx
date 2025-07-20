@@ -1,6 +1,6 @@
 "use client";
-import ResultCounter from "@/components/state/local-counter/ResultCounter";
-import TriggerCounter from "@/components/state/local-counter/TriggerCounter";
+import ResultCounter from "@/app/ui/state/local-counter/ResultCounter";
+import TriggerCounter from "@/app/ui/state/local-counter/TriggerCounter";
 import { useState } from "react";
 
 export default function Page() {
