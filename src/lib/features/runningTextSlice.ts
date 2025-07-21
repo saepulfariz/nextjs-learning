@@ -9,7 +9,7 @@ export interface RunningTextState {
 }
 
 const initialState: RunningTextState = {
-  text: "Hello World By Saepulfariz ^_^",
+  text: "Tidak ada yang gagal, mereka hanya berhenti terlalu cepat. - Thomas Edison - ",
   loading: false,
 };
 export const runningTextSlice = createSlice({
