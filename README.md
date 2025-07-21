@@ -102,13 +102,13 @@ npx prisma generate
 #### Self Notes
 
 ```bash
-- pnpm install @prisma/client
-- pnpm install prisma --save-dev
-- npx prisma init
-- npx prisma migrate dev --name init_table
-- npx prisma generate
-- npx prisma migrate dev --name create_divisions_table
-- npx prisma migrate reset
+pnpm install @prisma/client
+pnpm install prisma --save-dev
+npx prisma init
+npx prisma migrate dev --name init_table
+npx prisma generate
+npx prisma migrate dev --name create_divisions_table
+npx prisma migrate reset
 ```
 
 ## Redux
@@ -117,6 +117,14 @@ npx prisma generate
 
 ```bash
 npm install @reduxjs/toolkit react-redux
+```
+
+## Next Auth
+
+### Initial Setup
+
+```bash
+pnpm install next-auth zod bcrypt
 ```
 
 ## Learn More
