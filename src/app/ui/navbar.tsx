@@ -41,6 +41,10 @@ export default function Navbar() {
       label: "Global Posts",
       href: "/state/global-posts",
     },
+    {
+      label: "Global Running Text",
+      href: "/state/global-running-text",
+    },
   ];
 
   // Profile menu items

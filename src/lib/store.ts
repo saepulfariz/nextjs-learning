@@ -3,6 +3,7 @@ import counterReducerEasy from "@/lib/features/counterSliceEasy";
 import counterReducerHard from "@/lib/features/counterSlice";
 import postsReducer from "@/lib/features/postsSlice";
 import userReducer from "@/lib/features/userSlice";
+import runningTextReducer from "@/lib/features/runningTextSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -11,6 +12,7 @@ export const makeStore = () => {
       counterHard: counterReducerHard,
       posts: postsReducer,
       user: userReducer,
+      runningText: runningTextReducer,
     },
   });
 };
