@@ -109,6 +109,7 @@ npx prisma migrate dev --name init_table
 npx prisma generate
 npx prisma migrate dev --name create_divisions_table
 npx prisma migrate reset
+npx prisma migrate dev --name create_roles_table
 ```
 
 ## Redux

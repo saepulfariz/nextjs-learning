@@ -14,11 +14,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model roles {
+  id          String  @id @default(cuid())
+  name        String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  deleted_at  DateTime?
+  users       users[]
+}
 
 model users {
   id          String  @id @default(cuid())
   name        String
   email       String  @unique
+  password    String
+  role        roles   @relation(fields: [role_id], references: [id])
+  role_id     String  @unique
+  is_active   Boolean @default(true)
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   deleted_at  DateTime?
