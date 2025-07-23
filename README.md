@@ -131,6 +131,41 @@ pnpm install bcrypt
 npm i --save-dev @types/bcrypt
 ```
 
+## Seeder Data
+
+### Initial Setup
+
+```bash
+npm install ts-node (error install)
+pnpm install --save-dev tsx
+```
+
+### Script
+
+```json
+"scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed": "prisma db seed"
+},
+"prisma": {
+    "seed": "tsx prisma/seed.ts"
+},
+```
+
+### Running Seeder
+
+```bash
+npx prisma db seed
+```
+
+```bash
+pnpm seed
+npm run seed
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
