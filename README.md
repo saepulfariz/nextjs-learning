@@ -125,7 +125,10 @@ npm install @reduxjs/toolkit react-redux
 ### Initial Setup
 
 ```bash
-pnpm install next-auth zod bcrypt
+pnpm install next-auth
+pnpm install zod
+pnpm install bcrypt
+npm i --save-dev @types/bcrypt
 ```
 
 ## Learn More
