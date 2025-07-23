@@ -97,6 +97,7 @@ npx prisma migrate reset
 npx prisma migrate resolve --applied 20250718100021_init_table
 npx prisma migrate deploy
 npx prisma generate
+npx prisma migrate reset --force
 ```
 
 #### Self Notes

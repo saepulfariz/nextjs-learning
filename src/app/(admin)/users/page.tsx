@@ -81,7 +81,7 @@ export default function Page() {
   useEffect(() => {
     fetchUsers();
     fetchRoles();
-  }, [fetchUsers]); // Now fetchUsers is in dependency array
+  }, [fetchUsers, fetchRoles]); // Now fetchUsers and fetchRoles are in dependency array
 
   const handleAddUser = async () => {
     if (!name) return;
