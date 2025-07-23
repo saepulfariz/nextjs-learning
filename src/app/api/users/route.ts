@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { PrismaClient } from "@/generated/prisma";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,31 @@ export async function GET(request: NextRequest) {
       orderBy: {
         created_at: "desc",
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        is_active: true,
+        password: false, // Exclude password from the response
+        created_at: true,
+        updated_at: true,
+        role: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      // include: {
+      //   role: true,
+      // },
     });
+
+    // Map role.name to role_name for each user
+    const usersWithRoleName = users.map((user) => ({
+      ...user,
+      role_name: user.role?.name,
+      role: undefined, // remove role object if not needed
+    }));
     return new Response(
       JSON.stringify({ data: users, message: "Users fetched successfully" }),
       {
@@ -30,7 +55,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email } = body;
+    const { name, email, password, role_id } = body;
 
     if (!name) {
       return new Response(JSON.stringify({ error: "Name is required" }), {
@@ -46,10 +71,45 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    if (role_id === undefined || role_id === null) {
+      return new Response(JSON.stringify({ error: "Role ID is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Check if the role_id exists in the roles table before creating the user
+    const roleExists = await prisma.roles.findUnique({
+      where: { id: role_id },
+    });
+
+    if (!roleExists) {
+      return new Response(JSON.stringify({ error: "Role ID does not exist" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Check for unique email before creating user
+    const existingUser = await prisma.users.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return new Response(JSON.stringify({ error: "Email already exists" }), {
+        status: 409,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = await prisma.users.create({
       data: {
         name,
         email,
+        password: hashedPassword,
+        role_id: role_id,
       },
     });
 
@@ -62,7 +122,10 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Error creating user:", error);
-    return new Response("Failed to create user", { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Failed to create user", data: error }),
+      { status: 500 }
+    );
   } finally {
     await prisma.$disconnect();
   }
@@ -71,7 +134,7 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, email } = body;
+    const { id, name, email, role_id, password } = body;
 
     if (!id || !name || !email) {
       return new Response(
@@ -83,9 +146,39 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    if (role_id === undefined || role_id === null) {
+      return new Response(JSON.stringify({ error: "Role ID is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (password) {
+      // If password is provided, hash it
+      const hashedPassword = await bcrypt.hash(password, 10);
+      body.password = hashedPassword; // Update body with hashed password
+    }
+
+    // Prepare update data object
+    const updateData: {
+      name: string;
+      email: string;
+      role_id: string;
+      updated_at: Date;
+      password?: string;
+    } = {
+      name,
+      email,
+      role_id,
+      updated_at: new Date(),
+    };
+    if (password) {
+      updateData.password = body.password;
+    }
+
     const updatedUser = await prisma.users.update({
       where: { id },
-      data: { name, email, updated_at: new Date() },
+      data: updateData,
     });
 
     return new Response(

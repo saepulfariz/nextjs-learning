@@ -8,24 +8,41 @@ import {
   setUsers as setUsersGlobal,
 } from "@/lib/features/userSlice";
 import UserManagementList from "@/app/ui/state/UserManagementList";
+import { set } from "zod/v4/mini";
 
 type User = {
   id: number;
   name: string;
   email: string;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
+  role: {
+    id: string;
+    name: string;
+  };
+};
+
+type Role = {
+  id: string;
+  name: string;
 };
 
 export default function Page() {
   const dispatch = useAppDispatch();
 
   const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [name, setName] = useState("");
+  const [roleId, setRoleId] = useState("");
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [editId, setEditId] = useState(0);
   const [editName, setEditName] = useState("");
   const [editEmail, setEditEmail] = useState("");
+  const [editRoleId, setEditRoleId] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+  const [editIsActive, setEditIsActive] = useState(true);
   const [loading, setLoading] = useState(true);
 
   // Use useCallback to memoize fetchUsers function
@@ -48,20 +65,36 @@ export default function Page() {
     }
   }, [dispatch]);
 
+  const fetchRoles = useCallback(async () => {
+    try {
+      const response = await fetch("/api/roles");
+      if (!response.ok) {
+        throw new Error("Failed to fetch roles");
+      }
+      const data = await response.json();
+      setRoles(data.data);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  }, []);
+
   useEffect(() => {
     fetchUsers();
+    fetchRoles();
   }, [fetchUsers]); // Now fetchUsers is in dependency array
 
   const handleAddUser = async () => {
     if (!name) return;
     if (!email) return;
+    if (!password) return;
+    if (!roleId) return;
 
     const response = await fetch("/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, email }),
+      body: JSON.stringify({ name, email, password, role_id: roleId }),
     });
 
     if (response.ok) {
@@ -72,6 +105,8 @@ export default function Page() {
       fetchUsers();
       setName("");
       setEmail("");
+      setPassword("");
+      setRoleId("");
     } else {
       console.error("Failed to add user");
     }
@@ -80,13 +115,20 @@ export default function Page() {
   const handleUpdateUser = async (id: number) => {
     if (!editName) return;
     if (!editEmail) return;
+    if (!editRoleId) return;
 
     const response = await fetch("/api/users", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id, name: editName, email: editEmail }),
+      body: JSON.stringify({
+        id,
+        name: editName,
+        email: editEmail,
+        role_id: editRoleId,
+        password: editPassword,
+      }),
     });
 
     if (response.ok) {
@@ -94,6 +136,8 @@ export default function Page() {
       setEditId(0);
       setEditName("");
       setEditEmail("");
+      setEditRoleId("");
+      setEditPassword("");
     } else {
       console.error("Failed to update user");
     }
@@ -137,6 +181,30 @@ export default function Page() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-50 mr-2 mb-2 max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
           />
+          <input
+            type="password"
+            placeholder="Input user password..."
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-50 mr-2 mb-2 max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
+          />
+          <select
+            value={roleId}
+            onChange={(e) => {
+              console.log("ROle");
+              setRoleId(e.target.value);
+            }}
+            className="w-50 mr-2 mb-2 max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
+          >
+            <option value={""} selected>
+              Select Role
+            </option>
+            {roles.map((role) => (
+              <option key={role.id} value={role.id}>
+                {role.name}
+              </option>
+            ))}
+          </select>
           <button
             onClick={handleAddUser}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
@@ -154,6 +222,12 @@ export default function Page() {
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-200">
                   Email
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-200">
+                  Role
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-200">
+                  Is Active
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-200">
                   Created At
@@ -201,6 +275,32 @@ export default function Page() {
                           className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </td>
+                      <td className="px-6 py-4">
+                        <select
+                          value={editRoleId}
+                          onChange={(e) => setEditRoleId(e.target.value)}
+                          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option disabled value="">
+                            Select Role
+                          </option>
+                          {roles.map((role) => (
+                            <option key={role.id} value={role.id}>
+                              {role.name}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-6 py-4" colSpan={2}>
+                        <input
+                          type="password"
+                          value={editPassword}
+                          placeholder="Change password..."
+                          onChange={(e) => setEditPassword(e.target.value)}
+                          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </td>
+
                       <td className="px-6 py-4 flex items-center">
                         <button
                           onClick={() => {
@@ -228,6 +328,12 @@ export default function Page() {
                         {user.email}
                       </td>
                       <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        {user.role ? user.role.name : "No Role Assigned"}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                        {user.is_active ? "Yes" : "No"}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                         {new Date(user.created_at).toLocaleDateString() +
                           " " +
                           new Date(user.created_at).toLocaleTimeString()}
@@ -243,6 +349,8 @@ export default function Page() {
                             setEditId(user.id);
                             setEditName(user.name);
                             setEditEmail(user.email);
+                            setEditRoleId(user.role.id || "");
+                            setEditPassword(""); // Reset password field
                           }}
                           className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none"
                         >
