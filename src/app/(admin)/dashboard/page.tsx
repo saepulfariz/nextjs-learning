@@ -1,11 +1,11 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
-  const router = useRouter();
+  //   const router = useRouter();
 
   if (status === "loading")
     return (
@@ -22,10 +22,10 @@ export default function Dashboard() {
         </main>
       </>
     );
-  if (!session) {
-    router.push("/login");
-    return null;
-  }
+  //   if (!session) {
+  //     router.push("/login");
+  //     return null;
+  //   }
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
@@ -35,7 +35,7 @@ export default function Dashboard() {
           <p className="text-gray-600">
             Logged in as:{" "}
             <span className="font-medium text-blue-600">
-              {session.user?.email}
+              {session?.user?.email}
             </span>
           </p>
         </div>
