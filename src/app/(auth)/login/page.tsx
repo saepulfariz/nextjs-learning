@@ -10,11 +10,14 @@ export default function HomePage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerName, setRegisterName] = useState("");
 
   const handleRegister = async () => {
+    setLoading(true);
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       body: JSON.stringify({
@@ -28,12 +31,15 @@ export default function HomePage() {
     const data = await res.json();
     if (res.ok) {
       alert("Register success");
+      setLoading(false);
     } else {
+      setLoading(false);
       alert(data.error || "Register failed");
     }
   };
 
   const handleLogin = async () => {
+    setLoading(true);
     const res = await signIn("credentials", {
       redirect: false,
       email,
@@ -42,8 +48,10 @@ export default function HomePage() {
 
     if (res?.error) {
       alert(res.error);
+      setLoading(false);
     } else {
-      router.push("/about"); // ganti ke halaman tujuanmu
+      setLoading(false);
+      router.push("/dashboard"); // ganti ke halaman tujuanmu
     }
   };
 
@@ -73,8 +81,9 @@ export default function HomePage() {
             <button
               onClick={handleLogin}
               className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-[1.02]"
+              disabled={loading}
             >
-              Login
+              {loading ? "Loading..." : "Login"}
             </button>
           </div>
         </div>
@@ -117,9 +126,10 @@ export default function HomePage() {
             />
             <button
               onClick={handleRegister}
+              disabled={loading}
               className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-[1.02]"
             >
-              Register
+              {loading ? "Loading..." : "Register"}
             </button>
           </div>
         </div>

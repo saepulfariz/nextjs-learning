@@ -4,8 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import DropdownMenu from "@/app/ui/navbar/DropdownMenu";
 import NavDropdownTrigger from "@/app/ui/navbar/NavDropdownTrigger";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
+  const { data: session, status } = useSession();
   const [stateDropdownOpen] = useState(false);
 
   const masterMenuItems = [
@@ -50,7 +52,7 @@ export default function Navbar() {
   // Profile menu items
   const profileMenuItems = [
     {
-      label: "Saepulfariz",
+      label: session?.user?.name ?? "Guest",
       divider: true,
     },
     {
@@ -63,7 +65,7 @@ export default function Navbar() {
     },
     {
       label: "Logout",
-      onClick: () => alert("Logout clicked"),
+      onClick: () => signOut({ callbackUrl: "/login" }),
     },
   ];
 
@@ -73,10 +75,10 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex space-x-6 items-center">
             <Link
-              href="/"
+              href="/dashboard"
               className="text-gray-800 hover:text-blue-600 font-medium"
             >
-              Home
+              Dashboard
             </Link>
             <Link
               href="/about"
