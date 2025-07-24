@@ -30,13 +30,17 @@ export async function POST(req: Request) {
     where: { name: "Member" },
   });
 
+  if (!memberRole) {
+    return NextResponse.json({ error: "Member role not found" }, { status: 500 });
+  }
+
   const user = await prisma.users.create({
     data: {
       email,
       password: hashedPassword,
       name,
       role: {
-        connect: { id: memberRole?.id! },
+        connect: { id: memberRole.id },
       },
     },
   });
