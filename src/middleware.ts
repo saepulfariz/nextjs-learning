@@ -7,5 +7,12 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/dashboard", "/users", "/division", "/state/:path*"],
+  matcher: [
+    "/dashboard",
+    "/users",
+    "/division",
+    "/state/:path*",
+    "/products/:path*",
+    // "/((?!api|_next/static|_next/image|favicon.ico).*)", // kecuali API routes dan static files
+  ],
 };
