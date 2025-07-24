@@ -24,8 +24,8 @@ async function main() {
   });
 
   // Hash passwords
-  const adminPassword = await bcrypt.hash("123", 10); // ganti 'admin123' dengan password yang diinginkan
-  const memberPassword = await bcrypt.hash("123", 10);
+  const adminPassword = await bcrypt.hash("admin123", 10); // ganti 'admin123' dengan password yang diinginkan
+  const memberPassword = await bcrypt.hash("member123", 10);
 
   // Seed users
   await prisma.users.upsert({
