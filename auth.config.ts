@@ -1,10 +1,24 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import { z } from "zod";
 import { PrismaClient } from "@root/src/generated/prisma";
 
 const prisma = new PrismaClient();
+
+declare module "next-auth" {
+  interface User {
+    role?: { name: string };
+  }
+  interface Session {
+    user: {
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      role?: string | null;
+    };
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -27,6 +41,20 @@ export const authOptions: NextAuthOptions = {
 
         const user = await prisma.users.findUnique({
           where: { email },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            is_active: true,
+            password: true, // Exclude password from the response
+            created_at: true,
+            updated_at: true,
+            role: {
+              select: {
+                name: true,
+              },
+            },
+          },
         });
 
         if (!user) throw new Error("No user found");
@@ -38,12 +66,37 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           name: user.name,
           email: user.email,
+          role: user.role,
         };
       },
     }),
   ],
   session: {
     strategy: "jwt",
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      // Saat login, tambahkan role dari user ke token
+      if (user) {
+        // Ambil role dari user, misal user.role
+        token.role = user.role?.name || "Member";
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Tambahkan role ke session agar bisa diakses di client
+      // session.user.role = token.role;
+      if (session.user) {
+        session.user.role =
+          typeof token.role === "string"
+            ? token.role
+            : String(token.role ?? "");
+      }
+
+      console.log(session, 96);
+      console.log(token, 97);
+      return session;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
