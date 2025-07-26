@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { set } from "zod";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
@@ -10,6 +10,8 @@ export default function RegisterPage() {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerName, setRegisterName] = useState("");
+
+  const router = useRouter();
 
   const handleRegister = async () => {
     setLoading(true);
@@ -30,6 +32,10 @@ export default function RegisterPage() {
       setRegisterName("");
       setRegisterEmail("");
       setRegisterPassword("");
+      localStorage.setItem("pendingVerifyEmail", registerEmail);
+      setTimeout(() => {
+        router.push("/verify");
+      }, 1000);
     } else {
       setLoading(false);
       alert(data.error || "Register failed");

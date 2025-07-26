@@ -49,6 +49,7 @@ export const authOptions: NextAuthOptions = {
             password: true, // Exclude password from the response
             created_at: true,
             updated_at: true,
+            verified_at: true,
             role: {
               select: {
                 name: true,
@@ -59,6 +60,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!user) throw new Error("No user found");
         if (!user.password) throw new Error("No password set for user");
+        if (!user.verified_at) throw new Error("User not verified");
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) throw new Error("Invalid password");
 
