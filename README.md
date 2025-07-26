@@ -112,6 +112,8 @@ npx prisma migrate dev --name create_divisions_table
 npx prisma migrate reset
 npx prisma migrate dev --name create_roles_table
 npx prisma migrate dev --name remove-role-unique
+npx prisma migrate dev --name create_otps_table
+npx prisma migrate deploy
 ```
 
 ## Redux
@@ -166,6 +168,16 @@ npx prisma db seed
 ```bash
 pnpm seed
 npm run seed
+```
+
+## Mailer
+
+### Initial Setup
+
+```bash
+pnpm install nodemailer
+pnpm install @types/nodemailer
+npm i --save-dev @types/nodemailer
 ```
 
 ## Learn More

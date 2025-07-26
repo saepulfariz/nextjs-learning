@@ -61,8 +61,8 @@ export default function HomePage() {
         </div>
 
         <p className="text-sm text-gray-600 mt-4 text-center">
-          Don't have an account?{" "}
-          <Link href="/register" className="text-blue-500 hover:underline">
+          {"Don't have an account?"}
+          <Link href="/register" className="text-blue-500 hover:underline ml-1">
             Register here
           </Link>
         </p>

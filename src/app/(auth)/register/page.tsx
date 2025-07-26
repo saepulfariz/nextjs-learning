@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { set } from "zod";
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
@@ -26,6 +27,9 @@ export default function RegisterPage() {
     if (res.ok) {
       alert("Register success");
       setLoading(false);
+      setRegisterName("");
+      setRegisterEmail("");
+      setRegisterPassword("");
     } else {
       setLoading(false);
       alert(data.error || "Register failed");
@@ -68,8 +72,8 @@ export default function RegisterPage() {
           </button>
         </div>
         <p className="text-sm text-gray-600 mt-4 text-center">
-          Already have an account?{" "}
-          <Link href="/login" className="text-blue-500 hover:underline">
+          Already have an account?
+          <Link href="/login" className="text-blue-500 hover:underline ml-1">
             Login here
           </Link>
         </p>

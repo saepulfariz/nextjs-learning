@@ -36,6 +36,7 @@ async function main() {
       email: "admin@gmail.com",
       password: adminPassword,
       role_id: adminRole?.id!,
+      verified_at: new Date(), // Set verified_at to current date
     },
   });
 
@@ -47,6 +48,7 @@ async function main() {
       email: "member@gmail.com",
       password: memberPassword,
       role_id: memberRole?.id!,
+      verified_at: new Date(), // Set verified_at to current date
     },
   });
 }

@@ -31,19 +31,49 @@ export async function POST(req: Request) {
   });
 
   if (!memberRole) {
-    return NextResponse.json({ error: "Member role not found" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Member role not found" },
+      { status: 500 }
+    );
   }
 
-  const user = await prisma.users.create({
-    data: {
-      email,
-      password: hashedPassword,
-      name,
-      role: {
-        connect: { id: memberRole.id },
-      },
-    },
-  });
+  try {
+    const user = await prisma.$transaction(async (prisma) => {
+      const user = await prisma.users.create({
+        data: {
+          email,
+          password: hashedPassword,
+          name,
+          role: {
+            connect: { id: memberRole.id },
+          },
+        },
+      });
 
-  return NextResponse.json({ user });
+      return user;
+    });
+
+    // ⬇️ Call the send-otp API after user is created
+    const response = await fetch(`${process.env.BASE_URL}/api/auth/send-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      // delete data user
+      await prisma.users.delete({ where: { id: user.id } });
+      return NextResponse.json(
+        { error: "Registration Failed, Unable to send OTP" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ message: "User created successfully", user });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
 }
