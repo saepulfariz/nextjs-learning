@@ -1,11 +1,26 @@
 import { NextRequest } from "next/server";
 import { PrismaClient } from "@/generated/prisma";
 import bcrypt from "bcrypt";
+import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
+    const token = await getToken({ req: request });
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (token.role !== "Administrator") {
+      return NextResponse.json(
+        { error: "Only Administrator can show users" },
+        { status: 403 }
+      );
+    }
+
     const users = await prisma.users.findMany({
       where: {
         deleted_at: null,
@@ -54,6 +69,19 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const token = await getToken({ req: request });
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (token.role !== "Administrator") {
+      return NextResponse.json(
+        { error: "Only Administrator can create users" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { name, email, password, role_id } = body;
 
@@ -133,6 +161,19 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const token = await getToken({ req: request });
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (token.role !== "Administrator") {
+      return NextResponse.json(
+        { error: "Only Administrator can edit users" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { id, name, email, role_id, password } = body;
 
@@ -200,6 +241,19 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const token = await getToken({ req: request });
+
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (token.role !== "Administrator") {
+      return NextResponse.json(
+        { error: "Only Administrator can delete users" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     const { id } = body;
 

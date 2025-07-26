@@ -93,8 +93,6 @@ export const authOptions: NextAuthOptions = {
             : String(token.role ?? "");
       }
 
-      console.log(session, 96);
-      console.log(token, 97);
       return session;
     },
   },
