@@ -1,4 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 import { NextAuthOptions, User } from "next-auth";
 import { z } from "zod";
@@ -25,6 +26,15 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
   },
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      authorization: {
+        params: {
+          prompt: "select_account",
+        },
+      },
+    }),
     CredentialsProvider({
       name: "credentials",
       credentials: {
@@ -73,6 +83,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   session: {
     strategy: "jwt",
   },
@@ -96,6 +107,38 @@ export const authOptions: NextAuthOptions = {
       }
 
       return session;
+    },
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        if (!user.email) throw new Error("No email from Google account");
+
+        const existingUser = await prisma.users.findUnique({
+          where: { email: user.email },
+        });
+
+        const memberRole = await prisma.roles.findFirst({
+          where: { name: "Member" },
+        });
+
+        if (!existingUser) {
+          await prisma.users.create({
+            data: {
+              name: user.name || "",
+              email: user.email,
+              password: Math.random().toString(36).slice(-8), // random string 8 characters "hdxdqyrt"
+              is_active: true,
+              verified_at: new Date(),
+              role_id: memberRole?.id || "",
+            },
+          });
+        } else if (!existingUser.verified_at) {
+          await prisma.users.update({
+            where: { email: user.email },
+            data: { verified_at: new Date() },
+          });
+        }
+      }
+      return true;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
