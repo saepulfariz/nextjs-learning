@@ -189,6 +189,13 @@ pnpm install -D jest jest-environment-jsdom @testing-library/react @testing-libr
 pnpm create jest@latest
 ```
 
+### Use Testing
+
+```bash
+pnpm run test
+pnpm test
+```
+
 ### References
 
 - https://nextjs.org/docs/app/guides/testing/jest
