@@ -5,12 +5,19 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LoaderSpinner from "@/app/ui/loader-spinner";
+import BaseAlert from "@/app/ui/base-alert";
 
-export default function HomePage() {
+export default function LoginPage() {
   const router = useRouter(); // tambahkan ini
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [alert, setAlert] = useState({
+    type: "",
+    message: "",
+    isShow: false,
+  });
 
   const [loading, setLoading] = useState(false);
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
@@ -24,7 +31,12 @@ export default function HomePage() {
     });
 
     if (res?.error) {
-      alert(res.error);
+      console.log("Login error:", res.error);
+      setAlert({
+        type: "error",
+        message: res.error,
+        isShow: true,
+      });
       setLoading(false);
     } else {
       setLoading(false);
@@ -39,7 +51,11 @@ export default function HomePage() {
     });
     console.log(res, "Google sign-in response");
     if (res?.error) {
-      alert(res.error);
+      setAlert({
+        type: "error",
+        message: res.error,
+        isShow: true,
+      });
       setIsLoadingGoogle(false);
     } else {
       router.push("/dashboard"); // ganti ke halaman tujuanmu
@@ -54,20 +70,41 @@ export default function HomePage() {
           Login
         </h2>
         <div className="space-y-4">
-          <input
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-            type="email"
-          />
-          <input
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-          />
+          <div className="mb-6">
+            {alert.isShow && <BaseAlert alert={alert} />}
+          </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-gray-900"
+            >
+              Your email
+            </label>
+            <input
+              placeholder="Email"
+              value={email}
+              id="email"
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              type="email"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="password"
+              className="block mb-2 text-sm font-medium text-gray-900"
+            >
+              Your password
+            </label>
+            <input
+              placeholder="Password"
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            />
+          </div>
           <button
             onClick={handleLogin}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-[1.02]"

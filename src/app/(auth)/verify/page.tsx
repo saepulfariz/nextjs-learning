@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import LoaderSpinner from "@/app/ui/loader-spinner";
 import BaseAlert from "@/app/ui/base-alert";
 
-export default function Page() {
+export default function VerifyPage() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
