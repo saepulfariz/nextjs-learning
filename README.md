@@ -180,6 +180,19 @@ pnpm install @types/nodemailer
 npm i --save-dev @types/nodemailer
 ```
 
+## Unit Testing
+
+### Initial Setup
+
+```bash
+pnpm install -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
+pnpm create jest@latest
+```
+
+### References
+
+- https://nextjs.org/docs/app/guides/testing/jest
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
